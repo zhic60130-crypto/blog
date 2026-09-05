@@ -1,9 +1,7 @@
 ---
-name: Moeyua
-avatar: /apple-touch-icon.png
+name: 懒
+avatar: /images/codex-图像-2026年9月5日-21_02_05.png
 desc: そして、次の曲が始まるのです
 ---
-
-- 💻 前端开发 · 技术文档
-- 💫 阅读 · 游戏 · 动画
-- 📩 更多见[「关于」](/about)
+* 💻 技术文档
+* 💫 阅读 · 游戏 · 动画
