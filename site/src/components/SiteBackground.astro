@@ -91,10 +91,10 @@
 </div>
 
 <script>
-  // 播放策略：首页每次整页加载（含刷新）都播一次；
-  // 文章页直接最终态；swup 跳转不重载背景故不重播
+  // 播放策略：任何路由的整页加载（首进/刷新）都播一次；
+  // swup 跳转不重载本脚本（背景在 main 外持久存在）故不会每次跳转重播
   const stage = document.getElementById('charStage')
-  if (stage && location.pathname === '/') {
+  if (stage) {
     stage.classList.add('play')
   }
 </script>
