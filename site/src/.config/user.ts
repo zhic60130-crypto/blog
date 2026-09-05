@@ -10,24 +10,8 @@ export const userConfig: Partial<UserConfig> = {
     description: 'そして、次の曲が始まるのです',
     website: 'https://blog.moeyua.com',
     pageSize: 5,
-    socialLinks: [
-      {
-        name: 'github',
-        href: 'https://github.com/moeyua',
-      },
-      {
-        name: 'rss',
-        href: '/atom.xml',
-      },
-      {
-        name: 'twitter',
-        href: 'https://twitter.com/moeyua13',
-      },
-      {
-        name: 'mastodon',
-        href: 'https://moresci.sale/web/@moeyua',
-      },
-    ],
+    // 社交图标按用户要求移除（需要时往这里加回 { name, href } 即可）
+    socialLinks: [],
     navLinks: [
       {
         name: 'Posts',
