@@ -10,12 +10,12 @@ const svg = fs.readFileSync(path.resolve(import.meta.dirname, '../src/assets/cha
 const out = path.resolve(import.meta.dirname, '../public')
 
 await sharp(svg, { density: 144 })
-  .resize(1400)
+  .resize(1456)
   .webp({ quality: 82, alphaQuality: 100 })
   .toFile(path.join(out, 'bg-character.webp'))
 
 await sharp(svg, { density: 144 })
-  .resize(1400)
+  .resize(1456)
   .png({ palette: true })
   .toFile(path.join(out, 'bg-character.png'))
 

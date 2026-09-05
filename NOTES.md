@@ -62,6 +62,13 @@ pnpm build && pnpm preview --port 4321   # 或 pnpm dev
 | 内容 | - | 按用户要求文章暂不灌入；about 页 1:1 |
 | 功能 | 5 | RSS/sitemap/robots 均生成；console 0 错误 |
 
+## 背景 v3（2026-09-05，用户供真线稿+8步时间轴）
+
+- 线稿：用户提供的 SVG（viewBox 0 0 1456 1080，5 组：ears-hair/face/body/plane/details）内嵌组件，每 path 加 pathLength=1，stroke 用 currentColor。
+- 彩色 PNG：`site/src/assets/char-color.svg` 用**同一批路径**填色重排图层 → sharp 栅格化 `bg-character.webp`(67KB)/png → 与线稿像素对齐。
+- 时间轴：0s 网格纸立即 → .1s 耳发 → .35s 脸 → .6s 身臂 → 1.0s 纸飞机 → 1.5s 细节+装饰层 → 2.1s 彩色淡入 0→.14 且线稿沉 .4→.12 → 2.8s 静止。实测终态 line .12 / color .14 / decor .13。
+- 播放策略/移动端/reduced-motion 同 v2。git: 25f8127 之后三提。
+
 ## 背景 v2（2026-09-05，按用户规格）
 
 结构：CSS 网格纸（global.css）+ 透明 WebP/PNG 彩色角色（sharp 栅格化自 `site/src/assets/char-color.svg`，脚本 `site/scripts/render-char.mjs`，webp 30KB）+ 同几何 SVG 线稿逐笔勾线（stroke-dasharray/dashoffset + pathLength=1）+ 装饰 SVG（轨迹/星芒/手写句）。
