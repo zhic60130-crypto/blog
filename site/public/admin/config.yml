@@ -1,0 +1,49 @@
+# Decap CMS 配置 —— 字段与主题 content schema 一一对应
+# 文档: https://decapcms.org/docs/
+
+backend:
+  name: github
+  # ⚠️ 替换成你自己的仓库（文章源码仓库，即包含 src/content 的这个工程）
+  repo: your-name/your-blog-repo
+  branch: main
+  # 若不想走 Netlify 公共 OAuth 网关，可自建 OAuth provider 后填:
+  # base_url: https://your-oauth-server.com
+
+# 若用自建 GitLab，改成:
+# backend:
+#   name: gitlab
+#   repo: your-group/your-blog-repo
+#   base_url: https://gitlab.your-server.com
+
+media_folder: public/images
+public_folder: /images
+
+collections:
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    folder: src/content/posts
+    create: true
+    slug: '{{slug}}'
+    fields:
+      - { name: title, label: 标题, widget: string }
+      - { name: pubDate, label: 发布日期, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - name: categories
+        label: 分类
+        widget: list
+        field: { name: category, label: 分类, widget: string }
+      - { name: description, label: 摘要, widget: text, required: false }
+      - { name: draft, label: 草稿, widget: boolean, default: false, required: false }
+      - { name: body, label: 正文, widget: markdown }
+
+  - name: spec
+    label: 单页
+    label_singular: 页面
+    files:
+      - name: about
+        label: 关于页
+        file: src/content/spec/about.md
+        fields:
+          - { name: title, label: 标题, widget: string, required: false }
+          - { name: pubDate, label: 发布日期, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+          - { name: body, label: 正文, widget: markdown }

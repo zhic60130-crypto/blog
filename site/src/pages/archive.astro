@@ -1,0 +1,103 @@
+---
+import LayoutDefault from '~/layouts/LayoutDefault.astro'
+import type { Post } from '~/types'
+import { formatDate, getPosts } from '~/utils'
+
+const posts = await getPosts(true)
+const yearMap = getYearMap(posts)
+
+interface ListItem {
+  title: string
+  href: string
+  date: string
+}
+
+interface DayGroup {
+  date: string
+  week: string
+  items: ListItem[]
+}
+
+function getYearMap(posts: Post[]): [number, DayGroup[]][] {
+  const yearMap = new Map<number, Map<string, ListItem[]>>()
+  for (const post of posts) {
+    const year = (post.data.pubDate ?? new Date()).getFullYear()
+    const day = formatDate(post.data.pubDate, 'YYYY-MM-DD')
+    if (!yearMap.has(year)) yearMap.set(year, new Map())
+    const dayMap = yearMap.get(year)!
+    const list = dayMap.get(day) ?? []
+    list.push({
+      title: post.data.title,
+      href: `/posts/${post.id}/`,
+      date: formatDate(post.data.pubDate, 'MM-DD'),
+    })
+    dayMap.set(day, list)
+  }
+  return Array.from(yearMap.entries()).map(([year, dayMap]) => {
+    const groups: DayGroup[] = Array.from(dayMap.entries()).map(([day, items]) => ({
+      date: formatDate(new Date(day), 'MM · DD'),
+      week: formatDate(new Date(day), 'ddd').toUpperCase(),
+      items,
+    }))
+    return [year, groups] as [number, DayGroup[]]
+  })
+}
+---
+
+<LayoutDefault>
+  <div flex="~ col gap-8">
+    {
+      yearMap.map(([year, groups]) => (
+        <section>
+          <h2 class="post-title mb-4">{year}</h2>
+          <div flex="~ col gap-6">
+            {
+              groups.map(group => (
+                <section>
+                  <div class="day-head">
+                    <span class="day-date">{group.date}</span>
+                    <span class="day-week">{group.week}</span>
+                    <span class="day-line" aria-hidden="true"></span>
+                    <span class="day-count">{group.items.length} posts</span>
+                  </div>
+                  <ul class="pl-6" flex="~ col gap-4">
+                    {
+                      group.items.map(({ title, href, date }) => (
+                        <li>
+                          <h3 class="post-title">
+                            <a href={href}>{title}</a>
+                          </h3>
+                          <time>{date}</time>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </section>
+              ))
+            }
+          </div>
+        </section>
+      ))
+    }
+  </div>
+
+  <style>
+    /* 时间线日期组头（布局参考 niracler.com/channel，风格保持 Typography） */
+    .day-head {
+      --at-apply: 'flex items-center gap-3 mb-4';
+    }
+    .day-date {
+      --at-apply: 'font-header font-extrabold text-4 c-primary';
+    }
+    .day-week {
+      --at-apply: 'text-3 font-bold opacity-60';
+    }
+    .day-line {
+      --at-apply: 'flex-1 h-1px';
+      background: color-mix(in srgb, var(--uno-colors-primary) 30%, transparent);
+    }
+    .day-count {
+      --at-apply: 'text-3 opacity-60';
+    }
+  </style>
+</LayoutDefault>

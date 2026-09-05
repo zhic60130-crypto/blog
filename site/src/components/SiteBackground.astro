@@ -1,0 +1,110 @@
+---
+// 纯代码水印背景（SVG 绘制，参考用户提供的背景图）：
+// 纸飞机 + 简笔小家伙 + 星芒 + 手写便签，主色低透明度，锚定右下角
+---
+
+<svg
+  class="site-bg"
+  viewBox="0 0 1440 900"
+  preserveAspectRatio="xMaxYMax slice"
+  aria-hidden="true"
+>
+  <g fill="none" stroke="currentColor" stroke-width="2">
+    <!-- 虚线轨迹 -->
+    <path d="M1235 425 C 1285 405, 1310 362, 1348 318" stroke-dasharray="6 8" />
+    <path d="M995 812 c 42 30, 92 20, 112 -12" stroke-dasharray="6 8" />
+
+    <!-- 小纸飞机（右上） -->
+    <g transform="translate(1352 296) rotate(-18)">
+      <path d="M0 18 L54 0 L21 31 L14 22 Z" fill="currentColor" stroke="none" opacity=".55" />
+      <path d="M14 22 L18 35 L27 24" />
+    </g>
+
+    <!-- 小家伙骑纸飞机（按参考图重画：猫耳兜帽/双马尾卷毛/敬礼/条纹围巾/长纸飞机） -->
+    <g transform="translate(1150 470) scale(0.92)">
+      <!-- 纸飞机：主翼 + 尾翼 + 龙骨 -->
+      <g fill="currentColor" stroke="none" opacity=".35">
+        <path d="M-270 95 C -100 122, 150 122, 330 152 L 60 202 L -60 196 Z" />
+        <path d="M-270 95 L -243 13 L -203 60 L -224 100 Z" />
+        <path d="M-30 196 L 72 200 L 40 238 L -30 230 Z" />
+      </g>
+      <path d="M-270 95 C -100 122, 150 122, 330 152" stroke-width="2.5" />
+
+      <!-- 双马尾卷毛（左侧一大串 + 下方一丛） -->
+      <g fill="currentColor" stroke="none" opacity=".4">
+        <circle cx="-92" cy="-50" r="34" />
+        <circle cx="-112" cy="-8" r="32" />
+        <circle cx="-92" cy="32" r="30" />
+        <circle cx="-66" cy="60" r="24" />
+        <circle cx="-58" cy="94" r="32" />
+        <circle cx="-20" cy="114" r="28" />
+      </g>
+
+      <!-- 身体 + 围巾卷 + 尾巴 -->
+      <ellipse cx="0" cy="28" rx="42" ry="32" fill="currentColor" stroke="none" opacity=".4" />
+      <ellipse cx="2" cy="62" rx="56" ry="24" fill="currentColor" stroke="none" opacity=".45" />
+      <path d="M-30 58 q -8 14 0 26 M0 62 q -6 12 0 24 M30 58 q -8 14 0 26" stroke-width="3" opacity=".5" />
+      <path d="M-42 66 q -62 8 -74 40 q 32 8 48 -8 q 22 10 38 0" fill="currentColor" stroke="none" opacity=".45" />
+
+      <!-- 头 + 兜帽猫耳 -->
+      <circle cx="0" cy="-42" r="60" fill="currentColor" stroke="none" opacity=".4" />
+      <path d="M-46 -86 q -10 -42 12 -50 q 20 14 23 42 Z" fill="currentColor" stroke="none" opacity=".45" />
+      <path d="M46 -86 q 10 -42 -12 -50 q -20 14 -23 42 Z" fill="currentColor" stroke="none" opacity=".45" />
+      <path d="M-38 -92 q -2 -22 8 -28 q 10 8 12 24 Z" fill="currentColor" stroke="none" opacity=".25" />
+      <path d="M38 -92 q 2 -22 -8 -28 q -10 8 -12 24 Z" fill="currentColor" stroke="none" opacity=".25" />
+
+      <!-- 脸：刘海 + 大眼睛 + 小嘴 -->
+      <path d="M-44 -62 q 10 20 22 6 q 10 18 22 4 q 10 16 22 2 q 10 14 22 -4" stroke-width="3" opacity=".45" />
+      <ellipse cx="-22" cy="-34" rx="10" ry="14" fill="currentColor" stroke="none" opacity=".55" />
+      <ellipse cx="22" cy="-34" rx="10" ry="14" fill="currentColor" stroke="none" opacity=".55" />
+      <ellipse cx="2" cy="-12" rx="5" ry="4" fill="currentColor" stroke="none" opacity=".5" />
+
+      <!-- 敬礼手：条纹袖 + 手 -->
+      <circle cx="78" cy="-14" r="27" fill="currentColor" stroke="none" opacity=".4" />
+      <path d="M60 -26 q 18 -6 34 2 M58 -8 q 20 -6 38 2" stroke-width="3" opacity=".5" />
+      <ellipse cx="60" cy="-58" rx="12" ry="9" fill="currentColor" stroke="none" opacity=".5" />
+    </g>
+
+    <!-- 星芒 -->
+    <path d="M1090 418 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6 Z" fill="currentColor" stroke="none" opacity=".5" />
+    <path d="M1372 584 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 Z" fill="currentColor" stroke="none" opacity=".5" />
+    <path d="M1428 644 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4 Z" fill="currentColor" stroke="none" opacity=".5" />
+  </g>
+
+  <!-- 手写便签 -->
+  <g fill="currentColor" stroke="none">
+    <text x="1078" y="34" class="bg-note">在复杂的世界里，保留一点简单。</text>
+    <g class="bg-hand" transform="rotate(6 1290 210)">
+      <text x="1256" y="196">Keep</text>
+      <text x="1272" y="222">Writing</text>
+      <text x="1250" y="248">Keep Thinking</text>
+      <text x="1292" y="272">· · ·</text>
+    </g>
+    <text x="1030" y="298" class="bg-note">世界。</text>
+    <text x="940" y="588" class="bg-note">生活明朗，万物可爱。</text>
+    <text x="956" y="612" class="bg-note">—— 希望维持这个家伙</text>
+    <text x="1100" y="882" class="bg-note">—— 在文字里，和更好的自己相遇。</text>
+  </g>
+</svg>
+
+<style>
+  .site-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    color: var(--uno-colors-primary);
+    opacity: 0.13;
+  }
+  .bg-note {
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', 'DFKai-SB', cursive;
+  }
+  .bg-hand text {
+    font-size: 17px;
+    font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive;
+  }
+</style>

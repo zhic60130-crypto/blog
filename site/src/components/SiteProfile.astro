@@ -1,0 +1,31 @@
+---
+// 个人简介：视觉完全沿用 Typography 主题语言 ——
+// 左侧竖线（同竖排标题）、衬线粗体名字、关于页同款 emoji 列表，无卡片框/阴影
+import { themeConfig } from '~/.config'
+
+const { author, description } = themeConfig.site
+---
+
+<aside class="profile">
+  <div class="profile-id" flex="~ items-center gap-3">
+    <img src="/apple-touch-icon.png" alt={author} class="rounded-full" width="40" height="40" />
+    <span class="font-header font-extrabold text-5">{author}</span>
+  </div>
+  <p class="text-3.5 opacity-80">{description}</p>
+  <ul class="text-3.5" flex="~ col gap-2">
+    <li>💻 前端开发 · 技术文档</li>
+    <li>💫 阅读 · 游戏 · 动画</li>
+    <li>
+      📩 更多见<a href="/about">「关于」</a>
+    </li>
+  </ul>
+</aside>
+
+<style>
+  .profile {
+    --at-apply: 'flex flex-col gap-4';
+    /* 与之前竖排标题同款左竖线：主色 2px 实线 */
+    border-left: 2px solid var(--uno-colors-primary);
+    padding-left: 1rem;
+  }
+</style>

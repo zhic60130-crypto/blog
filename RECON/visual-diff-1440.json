@@ -1,0 +1,26 @@
+{
+  "original": {
+    "width": 1440,
+    "height": 900
+  },
+  "clone": {
+    "width": 1440,
+    "height": 900
+  },
+  "comparedCanvas": {
+    "width": 1440,
+    "height": 900
+  },
+  "threshold": 0.08,
+  "changedPixels": 70293,
+  "totalPixels": 1296000,
+  "diffPixelRatio": 0.054238425925925926,
+  "meanAbsDiff": 0.01940227245219204,
+  "rmse": 0.0876282530861175,
+  "visualScore": 4,
+  "files": {
+    "original": "C:\\Users\\LENOVO\\projects\\website-clones\\moeyua-blog-clone\\RECON\\screenshots\\original-1440.png",
+    "clone": "C:\\Users\\LENOVO\\projects\\website-clones\\moeyua-blog-clone\\RECON\\screenshots\\clone-1440.png",
+    "diff": "C:\\Users\\LENOVO\\projects\\website-clones\\moeyua-blog-clone\\RECON\\screenshots\\visual-diff-1440.png"
+  }
+}
