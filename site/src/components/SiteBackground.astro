@@ -127,7 +127,7 @@
 
   /* 角色容器：桌面右下 */
   .char-wrap {
-    --char-op: 0.22;
+    --char-op: 0.26;
     position: absolute;
     right: -1%;
     bottom: 0;
@@ -143,9 +143,10 @@
     height: 100%;
   }
 
-  /* 彩色位图：最终态 .14 */
+  /* 彩色位图：调暖调黄（sepia）+ 提饱和，让暖色人物在冷色纸面上更清楚；线条不动 */
   .char-color {
     opacity: var(--char-op);
+    filter: sepia(0.28) saturate(1.6);
   }
 
   /* 线稿：静止态完全淡出，只留干净彩图（避免与原图重叠） */
