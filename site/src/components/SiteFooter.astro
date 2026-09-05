@@ -13,7 +13,7 @@ function parseFooter(str: string) {
 }
 ---
 
-{footer.length && footer.map((str) => <p set:html={parseFooter(str)} />)}
+{footer.map((str) => <p set:html={parseFooter(str)} />)}
 
 <style>
   p {
