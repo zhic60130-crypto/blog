@@ -1,6 +1,10 @@
 # Decap CMS 配置 —— 字段与主题 content schema 一一对应
 # 文档: https://decapcms.org/docs/
 
+# 本地管理：在 site/ 目录跑 `npx decap-server` 后，
+# 打开 /admin/ 即可免 OAuth 直接编辑本机文件（媒体上传到 public/images）
+local_backend: true
+
 backend:
   name: github
   # ⚠️ 替换成你自己的仓库（文章源码仓库，即包含 src/content 的这个工程）
@@ -47,3 +51,11 @@ collections:
           - { name: title, label: 标题, widget: string, required: false }
           - { name: pubDate, label: 发布日期, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
           - { name: body, label: 正文, widget: markdown }
+      - name: profile
+        label: 简介卡（头像/名字/简介）
+        file: src/content/spec/profile.md
+        fields:
+          - { name: name, label: 名字, widget: string }
+          - { name: avatar, label: 头像（可上传新图）, widget: image }
+          - { name: desc, label: 一句话简介, widget: text }
+          - { name: body, label: 简介列表/正文, widget: markdown }
