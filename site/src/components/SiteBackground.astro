@@ -131,13 +131,13 @@
     font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive;
   }
 
-  /* 角色容器：桌面右下 */
+  /* 角色容器：左上角露出式（用户指定） */
   .char-wrap {
     --char-op: 0.6;
     position: absolute;
-    right: -1%;
-    bottom: 0;
-    width: min(46vw, 680px);
+    left: -3%;
+    top: -5%;
+    width: min(38vw, 560px);
     aspect-ratio: 1456 / 1080;
   }
   .char-wrap picture,
@@ -222,12 +222,13 @@
     }
   }
 
-  /* 移动端：缩小 + 右移 + 更淡 */
+  /* 移动端：更小 + 左上角露一点 + 更淡 */
   @media (max-width: 767px) {
     .char-wrap {
       --char-op: 0.3;
-      width: 80vw;
-      right: -16%;
+      width: 70vw;
+      left: -18%;
+      top: -3%;
     }
   }
 
