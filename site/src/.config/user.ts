@@ -32,11 +32,8 @@ export const userConfig: Partial<UserConfig> = {
       },
     ],
     categoryMap: [],
-    footer: [
-      '© %year <a target="_blank" href="%website">%author</a>',
-      'Theme <a target="_blank" href="https://github.com/Moeyua/astro-theme-typography">Typography</a> by <a target="_blank" href="https://moeyua.com">Moeyua</a>',
-      'Proudly published with <a target="_blank" href="https://astro.build/">Astro</a>',
-    ],
+    // 页脚三行按用户要求移除（MIT 主题署名建议保留在仓库 LICENSE/README 中）
+    footer: [],
   },
   appearance: {
     theme: 'system',
