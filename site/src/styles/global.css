@@ -20,3 +20,24 @@ html {
   --at-apply: 'ease-in-out duration-300ms';
   --at-apply: 'hover:(c-background bg-primary decoration-primary)';
 }
+
+/* 语录块（关于页/首页）：居中 + 橙色强调，参考用户提供的排版图 */
+.quote-block {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+}
+.quote-block p {
+  margin: 1.4em 0;
+  letter-spacing: 0.08em;
+}
+.quote-block .quote-line {
+  color: #c8553d;
+  font-size: 1.7em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.quote-block .quote-src {
+  text-align: right;
+  opacity: 0.75;
+  font-size: 0.95em;
+}

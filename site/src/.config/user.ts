@@ -14,21 +14,21 @@ export const userConfig: Partial<UserConfig> = {
     socialLinks: [],
     navLinks: [
       {
-        name: 'Posts',
+        // 首页=关于内容；文章列表迁至 /blog；「关于」按用户要求换成「首页」
+        name: '首页',
         href: '/',
       },
       {
-        // 导航文案改为「动态」（i18n 无此 key 时原样显示）
+        name: 'Posts',
+        href: '/blog',
+      },
+      {
         name: '动态',
         href: '/archive',
       },
       {
         name: 'Categories',
         href: '/categories',
-      },
-      {
-        name: 'About',
-        href: '/about',
       },
     ],
     categoryMap: [],

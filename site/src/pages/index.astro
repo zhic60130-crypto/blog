@@ -1,0 +1,17 @@
+---
+// 首页 = 关于内容（语录 + 自我介绍），文章列表迁至 /blog
+import { getEntry, render } from 'astro:content'
+import LayoutDefault from '~/layouts/LayoutDefault.astro'
+
+const aboutPost = await getEntry('spec', 'about')
+if (!aboutPost) {
+  throw new Error('No about post found')
+}
+const { Content } = await render(aboutPost)
+---
+
+<LayoutDefault>
+  <article class="prose">
+    <Content />
+  </article>
+</LayoutDefault>
