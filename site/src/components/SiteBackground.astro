@@ -107,6 +107,12 @@
     pointer-events: none;
     color: var(--uno-colors-primary);
     overflow: hidden;
+    /* 整层 multiply：白色像素融入纸面（消白眉毛），彩色正常显色 */
+    mix-blend-mode: multiply;
+  }
+  /* 暗色模式下 multiply 会把水印吞掉，改回正常混合 */
+  :global(html.dark) .bg-stage {
+    mix-blend-mode: normal;
   }
   .bg-decor {
     position: absolute;
@@ -127,7 +133,7 @@
 
   /* 角色容器：桌面右下 */
   .char-wrap {
-    --char-op: 0.45;
+    --char-op: 0.6;
     position: absolute;
     right: -1%;
     bottom: 0;
@@ -143,7 +149,7 @@
     height: 100%;
   }
 
-  /* 彩色位图：高浓度还原原画（自带描边），不再需要 sepia 补偿 */
+  /* 彩色位图：浓度由 --char-op 控制（multiply 在 .bg-stage 层生效） */
   .char-color {
     opacity: var(--char-op);
   }
@@ -219,7 +225,7 @@
   /* 移动端：缩小 + 右移 + 更淡 */
   @media (max-width: 767px) {
     .char-wrap {
-      --char-op: 0.22;
+      --char-op: 0.3;
       width: 80vw;
       right: -16%;
     }
