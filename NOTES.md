@@ -62,6 +62,15 @@ pnpm build && pnpm preview --port 4321   # 或 pnpm dev
 | 内容 | - | 按用户要求文章暂不灌入；about 页 1:1 |
 | 功能 | 5 | RSS/sitemap/robots 均生成；console 0 错误 |
 
+## 背景 v2（2026-09-05，按用户规格）
+
+结构：CSS 网格纸（global.css）+ 透明 WebP/PNG 彩色角色（sharp 栅格化自 `site/src/assets/char-color.svg`，脚本 `site/scripts/render-char.mjs`，webp 30KB）+ 同几何 SVG 线稿逐笔勾线（stroke-dasharray/dashoffset + pathLength=1）+ 装饰 SVG（轨迹/星芒/手写句）。
+节奏：头身 0.05-1.25s → 纸飞机 1.25-2.0s → 彩色淡入 0→.14（2.05-2.85s），总 <3s。
+播放策略：仅 `/` 且 sessionStorage 无 `bgPlayed` 时播；文章页/二次进入直接最终态；swup 不重载背景故不重播。prefers-reduced-motion 直接最终态。
+布局：body 网格改 cols-[3fr_2fr]（正文左 60%）；角色右下 min(46vw,660px)；移动端 80vw 右移 -16% 且 --char-op .08。
+坑：勾线动画选择器必须落在形状元素上（`#charStage.play .seg-a :is(path,circle,ellipse)`），加在 <g> 上无效（dashoffset 不继承）。
+git：重构前快照 73dad98，完成后二提。
+
 ## 右栏个人简介卡（2026-09-05）
 
 - `site/src/components/SiteProfile.astro`：布局参考 niracler 资料卡（频道行/头像+名/简介/编号列表），风格保持 Typography。

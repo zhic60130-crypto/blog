@@ -1,101 +1,103 @@
 ---
-// 纯代码水印背景（SVG 绘制，参考用户提供的背景图）：
-// 纸飞机 + 简笔小家伙 + 星芒 + 手写便签，主色低透明度，锚定右下角
+// 背景装饰（按用户规格 v2）：
+//  1. CSS 网格纸（在 global.css 的 html 上，不用整张背景图）
+//  2. 透明 WebP/PNG 彩色角色，固定右下，opacity .14（移动端 .08）
+//  3. 同几何简化 SVG 线稿，stroke-dasharray/dashoffset 逐笔勾线
+//  4. 装饰 SVG：纸飞机轨迹/星芒/虚线/手写短句，统一淡蓝灰
+//  5. 正文始终最上层；本层 pointer-events:none
+// 播放策略：仅首页首次进入播放（sessionStorage），其余页面直接最终态
+// 节奏：头身 0.05-1.25s → 纸飞机 1.25-2.0s → 彩色淡入 2.05-2.85s（总 <3s）
 ---
 
-<svg
-  class="site-bg"
-  viewBox="0 0 1440 900"
-  preserveAspectRatio="xMaxYMax slice"
-  aria-hidden="true"
->
-  <g fill="none" stroke="currentColor" stroke-width="2">
-    <!-- 虚线轨迹 -->
-    <path d="M1235 425 C 1285 405, 1310 362, 1348 318" stroke-dasharray="6 8" />
-    <path d="M995 812 c 42 30, 92 20, 112 -12" stroke-dasharray="6 8" />
-
-    <!-- 小纸飞机（右上） -->
-    <g transform="translate(1352 296) rotate(-18)">
-      <path d="M0 18 L54 0 L21 31 L14 22 Z" fill="currentColor" stroke="none" opacity=".55" />
-      <path d="M14 22 L18 35 L27 24" />
-    </g>
-
-    <!-- 小家伙骑纸飞机（按参考图重画：猫耳兜帽/双马尾卷毛/敬礼/条纹围巾/长纸飞机） -->
-    <g transform="translate(1150 470) scale(0.92)">
-      <!-- 纸飞机：主翼 + 尾翼 + 龙骨 -->
-      <g fill="currentColor" stroke="none" opacity=".35">
-        <path d="M-270 95 C -100 122, 150 122, 330 152 L 60 202 L -60 196 Z" />
-        <path d="M-270 95 L -243 13 L -203 60 L -224 100 Z" />
-        <path d="M-30 196 L 72 200 L 40 238 L -30 230 Z" />
+<div id="charStage" class="bg-stage" aria-hidden="true">
+  <!-- 装饰层：轨迹 / 小纸飞机 / 星芒 / 手写短句 -->
+  <svg class="bg-decor" viewBox="0 0 1440 900" preserveAspectRatio="xMaxYMax slice">
+    <g fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M1235 425 C 1285 405, 1310 362, 1348 318" stroke-dasharray="6 8" />
+      <path d="M995 812 c 42 30, 92 20, 112 -12" stroke-dasharray="6 8" />
+      <g transform="translate(1352 296) rotate(-18)">
+        <path d="M0 18 L54 0 L21 31 L14 22 Z" fill="currentColor" stroke="none" opacity=".55" />
+        <path d="M14 22 L18 35 L27 24" />
       </g>
-      <path d="M-270 95 C -100 122, 150 122, 330 152" stroke-width="2.5" />
-
-      <!-- 双马尾卷毛（左侧一大串 + 下方一丛） -->
-      <g fill="currentColor" stroke="none" opacity=".4">
-        <circle cx="-92" cy="-50" r="34" />
-        <circle cx="-112" cy="-8" r="32" />
-        <circle cx="-92" cy="32" r="30" />
-        <circle cx="-66" cy="60" r="24" />
-        <circle cx="-58" cy="94" r="32" />
-        <circle cx="-20" cy="114" r="28" />
+      <path d="M1090 418 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6 Z" fill="currentColor" stroke="none" opacity=".5" />
+      <path d="M1372 584 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 Z" fill="currentColor" stroke="none" opacity=".5" />
+      <path d="M1428 644 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4 Z" fill="currentColor" stroke="none" opacity=".5" />
+    </g>
+    <g fill="currentColor" stroke="none">
+      <text x="1078" y="34" class="bg-note">在复杂的世界里，保留一点简单。</text>
+      <g class="bg-hand" transform="rotate(6 1290 210)">
+        <text x="1256" y="196">Keep</text>
+        <text x="1272" y="222">Writing</text>
+        <text x="1250" y="248">Keep Thinking</text>
+        <text x="1292" y="272">· · ·</text>
       </g>
-
-      <!-- 身体 + 围巾卷 + 尾巴 -->
-      <ellipse cx="0" cy="28" rx="42" ry="32" fill="currentColor" stroke="none" opacity=".4" />
-      <ellipse cx="2" cy="62" rx="56" ry="24" fill="currentColor" stroke="none" opacity=".45" />
-      <path d="M-30 58 q -8 14 0 26 M0 62 q -6 12 0 24 M30 58 q -8 14 0 26" stroke-width="3" opacity=".5" />
-      <path d="M-42 66 q -62 8 -74 40 q 32 8 48 -8 q 22 10 38 0" fill="currentColor" stroke="none" opacity=".45" />
-
-      <!-- 头 + 兜帽猫耳 -->
-      <circle cx="0" cy="-42" r="60" fill="currentColor" stroke="none" opacity=".4" />
-      <path d="M-46 -86 q -10 -42 12 -50 q 20 14 23 42 Z" fill="currentColor" stroke="none" opacity=".45" />
-      <path d="M46 -86 q 10 -42 -12 -50 q -20 14 -23 42 Z" fill="currentColor" stroke="none" opacity=".45" />
-      <path d="M-38 -92 q -2 -22 8 -28 q 10 8 12 24 Z" fill="currentColor" stroke="none" opacity=".25" />
-      <path d="M38 -92 q 2 -22 -8 -28 q -10 8 -12 24 Z" fill="currentColor" stroke="none" opacity=".25" />
-
-      <!-- 脸：刘海 + 大眼睛 + 小嘴 -->
-      <path d="M-44 -62 q 10 20 22 6 q 10 18 22 4 q 10 16 22 2 q 10 14 22 -4" stroke-width="3" opacity=".45" />
-      <ellipse cx="-22" cy="-34" rx="10" ry="14" fill="currentColor" stroke="none" opacity=".55" />
-      <ellipse cx="22" cy="-34" rx="10" ry="14" fill="currentColor" stroke="none" opacity=".55" />
-      <ellipse cx="2" cy="-12" rx="5" ry="4" fill="currentColor" stroke="none" opacity=".5" />
-
-      <!-- 敬礼手：条纹袖 + 手 -->
-      <circle cx="78" cy="-14" r="27" fill="currentColor" stroke="none" opacity=".4" />
-      <path d="M60 -26 q 18 -6 34 2 M58 -8 q 20 -6 38 2" stroke-width="3" opacity=".5" />
-      <ellipse cx="60" cy="-58" rx="12" ry="9" fill="currentColor" stroke="none" opacity=".5" />
+      <text x="1030" y="298" class="bg-note">世界。</text>
+      <text x="1100" y="882" class="bg-note">—— 在文字里，和更好的自己相遇。</text>
     </g>
+  </svg>
 
-    <!-- 星芒 -->
-    <path d="M1090 418 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6 Z" fill="currentColor" stroke="none" opacity=".5" />
-    <path d="M1372 584 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 Z" fill="currentColor" stroke="none" opacity=".5" />
-    <path d="M1428 644 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4 Z" fill="currentColor" stroke="none" opacity=".5" />
-  </g>
+  <!-- 角色层：彩色位图 + 线稿叠放（同 viewBox，像素对齐） -->
+  <div class="char-wrap">
+    <picture>
+      <source srcset="/bg-character.webp" type="image/webp" />
+      <img class="char-color" src="/bg-character.png" alt="" width="1400" height="880" />
+    </picture>
+    <svg class="char-line" viewBox="-320 -170 700 440">
+      <!-- 头 + 身体 + 马尾 + 手（先画） -->
+      <g class="seg-a">
+        <circle cx="-92" cy="-50" r="34" pathLength="1" />
+        <circle cx="-112" cy="-8" r="32" pathLength="1" />
+        <circle cx="-92" cy="32" r="30" pathLength="1" />
+        <circle cx="-66" cy="60" r="24" pathLength="1" />
+        <circle cx="-58" cy="94" r="32" pathLength="1" />
+        <circle cx="-20" cy="114" r="28" pathLength="1" />
+        <ellipse cx="0" cy="28" rx="42" ry="32" pathLength="1" />
+        <path d="M-42 66 q -62 8 -74 40 q 32 8 48 -8 q 22 10 38 0" pathLength="1" />
+        <ellipse cx="2" cy="62" rx="56" ry="24" pathLength="1" />
+        <path d="M-46 -86 q -10 -42 12 -50 q 20 14 23 42 Z" pathLength="1" />
+        <path d="M46 -86 q 10 -42 -12 -50 q -20 14 -23 42 Z" pathLength="1" />
+        <circle cx="0" cy="-42" r="60" pathLength="1" />
+        <path d="M-44 -62 q 10 20 22 6 q 10 18 22 4 q 10 16 22 2 q 10 14 22 -4" pathLength="1" />
+        <ellipse cx="-22" cy="-34" rx="10" ry="14" pathLength="1" />
+        <ellipse cx="22" cy="-34" rx="10" ry="14" pathLength="1" />
+        <ellipse cx="2" cy="-12" rx="5" ry="4" pathLength="1" />
+        <circle cx="78" cy="-14" r="27" pathLength="1" />
+        <path d="M60 -26 q 18 -6 34 2 M58 -8 q 20 -6 38 2" pathLength="1" />
+        <ellipse cx="60" cy="-58" rx="12" ry="9" pathLength="1" />
+      </g>
+      <!-- 纸飞机（后画） -->
+      <g class="seg-p">
+        <path d="M-270 95 L -243 13 L -203 60 L -224 100 Z" pathLength="1" />
+        <path d="M-30 196 L 72 200 L 40 238 L -30 230 Z" pathLength="1" />
+        <path d="M-270 95 C -100 122, 150 122, 330 152 L 60 202 L -60 196 Z" pathLength="1" />
+      </g>
+    </svg>
+  </div>
+</div>
 
-  <!-- 手写便签 -->
-  <g fill="currentColor" stroke="none">
-    <text x="1078" y="34" class="bg-note">在复杂的世界里，保留一点简单。</text>
-    <g class="bg-hand" transform="rotate(6 1290 210)">
-      <text x="1256" y="196">Keep</text>
-      <text x="1272" y="222">Writing</text>
-      <text x="1250" y="248">Keep Thinking</text>
-      <text x="1292" y="272">· · ·</text>
-    </g>
-    <text x="1030" y="298" class="bg-note">世界。</text>
-    <text x="940" y="588" class="bg-note">生活明朗，万物可爱。</text>
-    <text x="956" y="612" class="bg-note">—— 希望维持这个家伙</text>
-    <text x="1100" y="882" class="bg-note">—— 在文字里，和更好的自己相遇。</text>
-  </g>
-</svg>
+<script>
+  // 播放策略：仅首页 + 本次会话首次进入播放；其余直接最终态
+  const stage = document.getElementById('charStage')
+  if (stage && location.pathname === '/' && !sessionStorage.getItem('bgPlayed')) {
+    stage.classList.add('play')
+    sessionStorage.setItem('bgPlayed', '1')
+  }
+</script>
 
 <style>
-  .site-bg {
+  .bg-stage {
     position: fixed;
     inset: 0;
-    width: 100%;
-    height: 100%;
     z-index: -1;
     pointer-events: none;
     color: var(--uno-colors-primary);
+    overflow: hidden;
+  }
+  .bg-decor {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     opacity: 0.13;
   }
   .bg-note {
@@ -106,5 +108,93 @@
   .bg-hand text {
     font-size: 17px;
     font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive;
+  }
+
+  /* 角色容器：桌面右下，正文让出右侧 */
+  .char-wrap {
+    --char-op: 0.14;
+    position: absolute;
+    right: -1%;
+    bottom: 0;
+    width: min(46vw, 660px);
+    aspect-ratio: 700 / 440;
+  }
+  .char-wrap picture,
+  .char-wrap img,
+  .char-wrap svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 彩色位图：最终态 .14 */
+  .char-color {
+    opacity: var(--char-op);
+  }
+
+  /* 线稿：默认已画完（最终态） */
+  .char-line path,
+  .char-line circle,
+  .char-line ellipse {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+
+  /* 播放态：从 0 笔开始勾线 → 上色淡入 */
+  #charStage.play .char-line path,
+  #charStage.play .char-line circle,
+  #charStage.play .char-line ellipse {
+    stroke-dashoffset: 1;
+  }
+  /* 动画必须落在形状元素上（dashoffset 不是继承属性） */
+  #charStage.play .seg-a :is(path, circle, ellipse) {
+    animation: char-draw 1.2s ease-out 0.05s forwards;
+  }
+  #charStage.play .seg-p :is(path, circle, ellipse) {
+    animation: char-draw 0.75s ease-out 1.25s forwards;
+  }
+  #charStage.play .char-color {
+    opacity: 0;
+    animation: char-fade 0.8s ease 2.05s forwards;
+  }
+  @keyframes char-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes char-fade {
+    to {
+      opacity: var(--char-op);
+    }
+  }
+
+  /* 移动端：缩小 + 右移 + 更淡 */
+  @media (max-width: 767px) {
+    .char-wrap {
+      --char-op: 0.08;
+      width: 80vw;
+      right: -16%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #charStage.play .char-line path,
+    #charStage.play .char-line circle,
+    #charStage.play .char-line ellipse,
+    #charStage.play .char-color {
+      animation: none;
+      stroke-dashoffset: 0;
+      opacity: var(--char-op);
+    }
+    #charStage.play .char-color {
+      opacity: var(--char-op);
+    }
   }
 </style>
