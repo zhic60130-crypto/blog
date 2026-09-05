@@ -127,7 +127,7 @@
 
   /* 角色容器：桌面右下 */
   .char-wrap {
-    --char-op: 0.14;
+    --char-op: 0.22;
     position: absolute;
     right: -1%;
     bottom: 0;
@@ -155,7 +155,7 @@
   .char-line .line {
     fill: none;
     stroke: currentColor;
-    stroke-width: 7;
+    stroke-width: 8;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-dasharray: 1;
@@ -168,7 +168,7 @@
     animation: decor-in 0.6s ease 1.5s forwards;
   }
   #charStage.play .char-line {
-    opacity: 0.4;
+    opacity: 0.7;
     /* 上色淡入后线稿完全淡出 */
     animation: char-settle 0.6s ease 2.2s forwards;
   }
@@ -219,7 +219,7 @@
   /* 移动端：缩小 + 右移 + 更淡 */
   @media (max-width: 767px) {
     .char-wrap {
-      --char-op: 0.08;
+      --char-op: 0.12;
       width: 80vw;
       right: -16%;
     }
