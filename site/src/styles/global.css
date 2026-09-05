@@ -41,3 +41,8 @@ html {
   opacity: 0.75;
   font-size: 0.95em;
 }
+
+/* 正文字号调大（用户要求）：prose 基准 16 → 17.2px */
+.prose {
+  font-size: 1.075rem;
+}
