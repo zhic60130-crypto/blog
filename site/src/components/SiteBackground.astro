@@ -91,11 +91,11 @@
 </div>
 
 <script>
-  // 播放策略：仅首页 + 本次会话首次进入播放；其余直接最终态
+  // 播放策略：首页每次整页加载（含刷新）都播一次；
+  // 文章页直接最终态；swup 跳转不重载背景故不重播
   const stage = document.getElementById('charStage')
-  if (stage && location.pathname === '/' && !sessionStorage.getItem('bgPlayed')) {
+  if (stage && location.pathname === '/') {
     stage.classList.add('play')
-    sessionStorage.setItem('bgPlayed', '1')
   }
 </script>
 
@@ -148,9 +148,9 @@
     opacity: var(--char-op);
   }
 
-  /* 线稿：最终态沉到 .12（"留一点"） */
+  /* 线稿：静止态完全淡出，只留干净彩图（避免与原图重叠） */
   .char-line {
-    opacity: 0.12;
+    opacity: 0;
   }
   .char-line .line {
     fill: none;
@@ -169,7 +169,8 @@
   }
   #charStage.play .char-line {
     opacity: 0.4;
-    animation: char-settle 0.6s ease 2.1s forwards;
+    /* 上色淡入后线稿完全淡出 */
+    animation: char-settle 0.6s ease 2.2s forwards;
   }
   #charStage.play .char-line .line {
     stroke-dashoffset: 1;
@@ -206,7 +207,7 @@
   }
   @keyframes char-settle {
     to {
-      opacity: 0.12;
+      opacity: 0;
     }
   }
   @keyframes decor-in {
@@ -235,7 +236,7 @@
       animation: none;
     }
     #charStage.play .char-line {
-      opacity: 0.12;
+      opacity: 0;
     }
     #charStage.play .char-color {
       opacity: var(--char-op);
