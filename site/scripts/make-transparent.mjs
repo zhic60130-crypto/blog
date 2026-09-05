@@ -36,7 +36,12 @@ function corner(i) {
 const bg = [0, 1, 2].map(c => Math.round(corner(0)[c] / 1 + corner(1)[c] / 1 + corner(2)[c] / 1 + corner(3)[c] / 1) / 4)
 console.log('背景色采样:', bg)
 
-// 洪水填充：从四条边出发，删除与背景色接近且与边界连通的像素
+// 若源图自带透明通道（四角 alpha≈0），直接用其 alpha，不做洪水填充/羽化
+// （洪水填充曾误伤内部深色描边）；仅不透明源图才走填色去底
+const cornerAlpha = data[px(0, 0) + 3]
+const hasAlpha = cornerAlpha < 250
+console.log('源图四角 alpha:', cornerAlpha, hasAlpha ? '→ 自带透明，跳过去底' : '→ 不透明，执行洪水填充')
+
 const tol = 60 // 容差（欧氏距离）
 const removed = new Uint8Array(width * height)
 const stack = []
@@ -53,31 +58,35 @@ for (let x = 0; x < width; x++) {
 for (let y = 0; y < height; y++) {
   stack.push([0, y], [width - 1, y])
 }
-while (stack.length) {
-  const [x, y] = stack.pop()
-  const idx = y * width + x
-  if (removed[idx] || !nearBg(x, y)) continue
-  removed[idx] = 1
-  if (x > 0) stack.push([x - 1, y])
-  if (x < width - 1) stack.push([x + 1, y])
-  if (y > 0) stack.push([x, y - 1])
-  if (y < height - 1) stack.push([x, y + 1])
+if (!hasAlpha) {
+  while (stack.length) {
+    const [x, y] = stack.pop()
+    const idx = y * width + x
+    if (removed[idx] || !nearBg(x, y)) continue
+    removed[idx] = 1
+    if (x > 0) stack.push([x - 1, y])
+    if (x < width - 1) stack.push([x + 1, y])
+    if (y > 0) stack.push([x, y - 1])
+    if (y < height - 1) stack.push([x, y + 1])
+  }
 }
 
 // 应用 alpha + 边缘半透明羽化（邻接被删像素且自身偏背景色的做 50%）
 let removedCount = 0
-for (let y = 0; y < height; y++) {
-  for (let x = 0; x < width; x++) {
-    const idx = y * width + x
-    const p = px(x, y)
-    if (removed[idx]) {
-      data[p + 3] = 0
-      removedCount++
-      continue
+if (!hasAlpha) {
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x
+      const p = px(x, y)
+      if (removed[idx]) {
+        data[p + 3] = 0
+        removedCount++
+        continue
+      }
+      // 羽化：与删除区相邻且颜色偏背景
+      const nb = (x > 0 && removed[idx - 1]) || (x < width - 1 && removed[idx + 1]) || (y > 0 && removed[idx - width]) || (y < height - 1 && removed[idx + width])
+      if (nb && nearBg(x, y)) data[p + 3] = 128
     }
-    // 羽化：与删除区相邻且颜色偏背景
-    const nb = (x > 0 && removed[idx - 1]) || (x < width - 1 && removed[idx + 1]) || (y > 0 && removed[idx - width]) || (y < height - 1 && removed[idx + width])
-    if (nb && nearBg(x, y)) data[p + 3] = 128
   }
 }
 console.log('去除背景像素:', removedCount, '/', width * height)
