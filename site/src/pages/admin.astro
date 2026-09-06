@@ -18,7 +18,22 @@ const config = getCmsConfig(import.meta.env.DEV)
   </head>
   <body>
     <!-- 手动初始化标记：必须先于 decap-cms.js 加载，否则它会去找 config.yml 自动初始化 -->
-    <script is:inline>window.CMS_MANUAL_INIT = true;</script>
+    <script is:inline>
+      // HTTP 非 localhost 环境下 crypto.randomUUID 不存在（安全上下文限制），
+      // Decap 的 PKCE 登录流程需要它；用 getRandomValues 实现同规格 polyfill。
+      // HTTPS 部署后此分支不再生效。
+      if (!window.crypto.randomUUID) {
+        window.crypto.randomUUID = function () {
+          const b = new Uint8Array(16)
+          window.crypto.getRandomValues(b)
+          b[6] = (b[6] & 0x0f) | 0x40
+          b[8] = (b[8] & 0x3f) | 0x80
+          const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+          return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) + '-' + h.slice(16, 20) + '-' + h.slice(20)
+        }
+      }
+      window.CMS_MANUAL_INIT = true
+    </script>
     <!-- is:inline：禁止 Astro/Vite 打包这个 UMD 包，必须原样输出才能挂到 window -->
     <script is:inline src="/admin/decap-cms.js"></script>
     <script is:inline define:vars={{ config }}>
