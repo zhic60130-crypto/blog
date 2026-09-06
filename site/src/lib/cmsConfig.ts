@@ -33,17 +33,6 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
 
     collections: [
       {
-        // 分类登记处：在后台这里「新建分类」，文章编辑页即可选择
-        name: 'category',
-        label: '分类',
-        label_singular: '分类',
-        folder: 'src/content/categories',
-        create: true,
-        slug: '{{slug}}',
-        identifier_field: 'title',
-        fields: [{ name: 'title', label: '分类名', widget: 'string' }],
-      },
-      {
         name: 'posts',
         label: '文章',
         label_singular: '文章',
@@ -63,14 +52,10 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
           {
             name: 'categories',
             label: '分类',
-            widget: 'relation',
-            collection: 'category',
-            search_fields: ['title'],
-            value_field: 'title',
-            display_fields: ['title'],
-            multiple: true,
+            widget: 'list',
+            field: { name: 'category', label: '分类名', widget: 'string' },
             required: false,
-            hint: '新分类请先在左侧「分类」里新建，刷新页面后回到这里即可选择',
+            hint: '点「添加」输入分类名；新分类直接填写，保存后自动生效（建议复用已有分类名）',
           },
           { name: 'description', label: '摘要', widget: 'text', required: false },
           { name: 'draft', label: '草稿', widget: 'boolean', default: false, required: false },
