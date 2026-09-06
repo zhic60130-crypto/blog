@@ -1,29 +1,55 @@
 ---
-import { themeConfig } from '~/.config'
-
-const theme = themeConfig.appearance.theme
+// 主题初始化：head 内联、首帧渲染前执行，避免暗色闪白。
+// 优先级：localStorage（用户手动切换的结果）> 跟随系统（themeConfig 的 system）。
+// 点击 [data-theme-toggle]（ThemeToggle 扇形按钮）切换并记忆，多标签页同步。
 ---
 
-<script is:inline define:vars={{ theme }}>
-  function updateTheme(theme) {
-    // Check if theme is system
-    if (theme === 'system') {
-      // Check OS preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      document.documentElement.classList.toggle('dark', prefersDark)
-      return
-    }
-    // Set theme directly
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-  }
+<script is:inline>
+  (function () {
+    // swup updateHead 会在每次换页重新执行本内联脚本，必须只注册一次监听，
+    // 否则点击事件被多个监听器重复处理、主题切过去又切回来，表现为按钮失效
+    if (window.__themeControlInit) return
+    window.__themeControlInit = true
 
-  // Initial theme setup
-  updateTheme(theme)
+    var KEY = 'theme'
 
-  // Listen for OS theme changes
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (theme === 'system') {
-      document.documentElement.classList.toggle('dark', e.matches)
+    function apply(mode) {
+      document.documentElement.classList.toggle('dark', mode === 'dark')
     }
-  })
+
+    function systemMode() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+
+    function savedMode() {
+      try {
+        return localStorage.getItem(KEY)
+      } catch (e) {
+        return null
+      }
+    }
+
+    apply(savedMode() || systemMode())
+
+    // 用户没手动选过时，跟随系统切换
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+      if (!savedMode()) apply(e.matches ? 'dark' : 'light')
+    })
+
+    // 委托监听：按钮被 swup 换页重渲染后依然有效
+    document.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest('[data-theme-toggle]') : null
+      if (!btn) return
+      var next = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
+      try {
+        localStorage.setItem(KEY, next)
+      } catch (err) {}
+      apply(next)
+    })
+
+    // 多标签页同步
+    window.addEventListener('storage', function (e) {
+      if (e.key === KEY && (e.newValue === 'light' || e.newValue === 'dark')) apply(e.newValue)
+    })
+  })()
 </script>

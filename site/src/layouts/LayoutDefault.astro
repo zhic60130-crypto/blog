@@ -8,6 +8,7 @@ import SiteSeo from '~/components/SiteSeo.astro'
 import LaTeX from '~/components/LaTeX.astro'
 import Analytics from '~/components/Analytics.astro'
 import ThemeScript from '~/components/ThemeScript.astro'
+import ThemeToggle from '~/components/ThemeToggle.astro'
 import '~/styles/global.css'
 
 const lang = themeConfig.appearance.locale ?? 'en-us'
@@ -28,10 +29,12 @@ const dark = themeConfig.appearance.theme === 'dark'
     lg="grid rows-[1fr_9rem]"
   >
     <SiteBackground />
+    <ThemeToggle />
     <header
       class="transition-swup-header flex flex-col gap-2.5"
       m="7.5"
-      lg="fixed right-6 top-16 w-72 m-0 items-start gap-6"
+      /* z-1：main 带 transform 会形成堆叠上下文盖住 fixed header，导致导航点不到 */
+      lg="fixed right-6 top-16 w-72 m-0 items-start gap-6 z-1"
     >
       <!-- 竖排标题已按用户要求移除，简介顶替其位置 -->
       <SiteProfile />

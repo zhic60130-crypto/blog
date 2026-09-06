@@ -38,6 +38,10 @@ export const userConfig: Partial<UserConfig> = {
   appearance: {
     theme: 'system',
     locale: 'zh-cn',
+    // 亮色背景调成暖纸色（用户要求：纯白太刺眼），primary 等其余颜色沿用默认值
+    colorsLight: {
+      background: '#f9f4e6',
+    },
   },
   seo: {
     twitter: '@moeyua13',
@@ -52,7 +56,7 @@ export const userConfig: Partial<UserConfig> = {
       { name: 'apple-mobile-web-app-title', content: 'Moeyua' },
       { name: 'application-name', content: 'Moeyua' },
       { name: 'msapplication-TileColor', content: '#da532c' },
-      { name: 'theme-color', content: '#ffffff' },
+      { name: 'theme-color', content: '#f9f4e6' },
     ],
   },
 }
