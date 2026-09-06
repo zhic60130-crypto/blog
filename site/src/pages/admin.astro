@@ -1,0 +1,29 @@
+---
+// 管理后台入口：/admin/
+// Decap CMS 自托管（/admin/decap-cms.js，不依赖 CDN）；
+// 配置唯一来源在 src/lib/cmsConfig.ts：
+//   - dev（pnpm dev + npx decap-server）→ 注入 local_backend，免 OAuth 编辑本机文件
+//   - 生产构建 → Gitea 后端（部署前在 cmsConfig.ts 填好 TODO）
+import { getCmsConfig } from '../lib/cmsConfig'
+
+const config = getCmsConfig(import.meta.env.DEV)
+---
+<!doctype html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>内容管理 · 講評世界</title>
+  </head>
+  <body>
+    <!-- 手动初始化标记：必须先于 decap-cms.js 加载，否则它会去找 config.yml 自动初始化 -->
+    <script is:inline>window.CMS_MANUAL_INIT = true;</script>
+    <!-- is:inline：禁止 Astro/Vite 打包这个 UMD 包，必须原样输出才能挂到 window -->
+    <script is:inline src="/admin/decap-cms.js"></script>
+    <script is:inline define:vars={{ config }}>
+      const CMSLib = window.CMS || window.DecapCMS
+      CMSLib.init({ config })
+    </script>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 ---
 // 个人简介卡：内容来自 src/content/spec/profile.md（后台可编辑）。
-// 点击身份条（头像+名字）展开/收起简介与链接；状态存 localStorage，
-// 点击用 document 事件委托（swup 换页重建 header 后依然有效）。
+// 固定面板样式（用户要求）：整卡一体的米色面板 + 主色左竖线 + 柔和投影，
+// 常驻显示，无展开/收起交互。
 import { getEntry, render } from 'astro:content'
 import { themeConfig } from '~/.config'
 
@@ -13,112 +13,36 @@ const desc = data.desc || themeConfig.site.description
 const Content = profile ? (await render(profile)).Content : null
 ---
 
-<aside class="profile" data-profile-card>
-  <button
-    type="button"
-    class="profile-toggle"
-    data-profile-toggle
-    aria-expanded="false"
-    aria-controls="profile-detail"
-  >
-    <span class="profile-id" flex="~ items-center gap-3">
-      <img src={avatar} alt={name} class="avatar rounded-full" width="50" height="50" />
-      <span class="font-header font-extrabold text-5">{name}</span>
-    </span>
-    <span class="chevron i-mdi-chevron-down" aria-hidden="true"></span>
-  </button>
-  <div class="profile-detail" id="profile-detail">
-    <div class="profile-detail-inner">
-      <p class="text-3.5 opacity-80">{desc}</p>
-      {
-        Content && (
-          <div class="profile-body text-3.5">
-            <Content />
-          </div>
-        )
-      }
-    </div>
+<aside class="profile">
+  <div class="profile-id" flex="~ items-center gap-3">
+    <img src={avatar} alt={name} class="rounded-full" width="50" height="50" />
+    <span class="font-header font-extrabold text-5">{name}</span>
   </div>
+  <p class="text-3.5 opacity-80">{desc}</p>
+  {
+    Content && (
+      <div class="profile-body text-3.5">
+        <Content />
+      </div>
+    )
+  }
 </aside>
 
 <style>
   .profile {
-    --at-apply: 'flex flex-col';
+    --at-apply: 'flex flex-col w-full gap-4';
+    /* 面板化：与抽屉同款底色/投影，左竖线沿用原卡样式 */
     border-left: 2px solid var(--uno-colors-primary);
-    padding-left: 1rem;
+    border-radius: 8px;
+    padding: 1rem;
+    background: var(--uno-colors-background);
+    box-shadow: 0 10px 20px rgb(0 0 0 / 0.09);
   }
-  .profile-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
+  :global(.dark) .profile {
+    box-shadow: 0 10px 20px rgb(0 0 0 / 0.4);
   }
-  .profile-toggle:focus-visible {
-    outline: 2px solid var(--uno-colors-primary);
-    outline-offset: 3px;
-    border-radius: 2px;
-  }
-  .avatar {
-    transition: transform 0.3s ease;
-  }
-  .chevron {
-    --at-apply: 'c-primary';
-    width: 1.1rem;
-    height: 1.1rem;
-    opacity: 0.55;
-    transition:
-      transform 0.35s ease,
-      opacity 0.2s ease;
-  }
-  .profile-toggle:hover .chevron {
-    opacity: 1;
-  }
-  .profile.open .chevron {
-    transform: rotate(180deg);
-  }
-  .profile.open .avatar {
-    transform: scale(1.06);
-  }
-
-  /* 展开区：grid-rows 0fr→1fr 高度动画（内容自然撑开，无需 JS 算高度） */
-  .profile-detail {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.35s ease;
-  }
-  .profile.open .profile-detail {
-    grid-template-rows: 1fr;
-  }
-  .profile-detail-inner {
-    overflow: hidden;
-    min-height: 0;
-    opacity: 0;
-    transform: translateY(-6px);
-    transition:
-      opacity 0.3s ease,
-      transform 0.3s ease;
-  }
-  .profile.open .profile-detail-inner {
-    opacity: 1;
-    transform: none;
-    transition-delay: 0.08s;
-  }
-  .profile-detail-inner p {
+  .profile p {
     margin: 0;
-  }
-  /* 展开态与原排版一致：描述与链接行的间距 */
-  .profile-detail-inner > p {
-    --at-apply: 'pt-4';
-  }
-  .profile-body {
-    --at-apply: 'pt-4';
   }
   .profile-body :global(ul) {
     --at-apply: 'flex flex-col gap-2';
@@ -126,57 +50,4 @@ const Content = profile ? (await render(profile)).Content : null
   .profile-body :global(p) {
     --at-apply: 'my-2';
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .profile-detail,
-    .profile-detail-inner,
-    .chevron,
-    .avatar {
-      transition: none;
-    }
-  }
-  /* 初始恢复记忆状态时禁用动画，避免进站时展开区闪动 */
-  .profile.no-anim,
-  .profile.no-anim * {
-    transition: none !important;
-  }
 </style>
-
-<script>
-  if (!(window as any).__profileToggleInit) {
-    ;(window as any).__profileToggleInit = true
-    const KEY = 'profile-expanded'
-
-    const apply = (animate: boolean) => {
-      const expanded = localStorage.getItem(KEY) === '1'
-      document.querySelectorAll<HTMLElement>('[data-profile-card]').forEach((card) => {
-        if (!animate) card.classList.add('no-anim')
-        card.classList.toggle('open', expanded)
-        const btn = card.querySelector('[data-profile-toggle]')
-        if (btn) btn.setAttribute('aria-expanded', String(expanded))
-        if (!animate) {
-          void card.offsetWidth
-          card.classList.remove('no-anim')
-        }
-      })
-    }
-
-    // 委托监听：身份条被 swup 换页重渲染后依然有效
-    document.addEventListener('click', (e) => {
-      const btn = (e.target as Element | null)?.closest?.('[data-profile-toggle]')
-      if (!btn) return
-      const card = btn.closest<HTMLElement>('[data-profile-card]')
-      if (!card) return
-      const expanded = !card.classList.contains('open')
-      card.classList.toggle('open', expanded)
-      btn.setAttribute('aria-expanded', String(expanded))
-      try {
-        localStorage.setItem(KEY, expanded ? '1' : '0')
-      } catch {}
-    })
-
-    // swup 换页后 header 重建，按记忆恢复展开状态（不播动画）
-    document.addEventListener('swup:page:view', () => apply(false))
-    apply(false)
-  }
-</script>
