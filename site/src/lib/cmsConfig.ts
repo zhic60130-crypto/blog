@@ -5,9 +5,9 @@
 // - 生产：Gitea 后端。部署前填好下面三个 TODO，并在 Gitea
 //   「设置 → 应用 → OAuth2 应用」创建应用，回调地址填 https://<站点域名>/admin/
 
-const SITE_URL = 'https://blog.example.com' // TODO: 部署时改成你的域名
-const GITEA_URL = 'https://git.example.com' // TODO: 你的 Gitea 地址
-const REPO = 'your-gitea-name/your-blog-repo' // TODO: 你的仓库（用户名/仓库名）
+const SITE_URL = 'http://42.194.232.215' // TODO: 域名就绪后改成 https://你的域名
+const GITEA_URL = 'http://42.194.232.215:3100' // TODO: 域名就绪后改成 https://git.你的域名
+const REPO = 'blogadmin/blog'
 
 // 分类在后台「分类」集合里新建和管理（src/content/categories/*.md），
 // 文章的分类字段用 relation 控件从中选择，保证分类名一致。
@@ -25,7 +25,7 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
       branch: 'main',
       base_url: GITEA_URL,
       // Gitea OAuth2 应用的 ClientID（PKCE 流程，无需 secret）
-      app_id: 'TODO-填Gitea-OAuth-App-ClientID',
+      app_id: 'fb660c78-7793-438e-bd6b-1e111ee54488',
     },
 
     media_folder: 'public/images',
