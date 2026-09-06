@@ -1,36 +1,20 @@
-// Decap CMS 配置（唯一来源）：字段与 src/content schema 一一对应
-//
-// - 本地开发：pnpm dev + `npx decap-server`，/admin/ 免 OAuth 直接编辑本机文件
-//   （useLocalBackend=true 时注入 local_backend，由 src/pages/admin.astro 按环境决定）
-// - 生产：Gitea 后端。部署前填好下面三个 TODO，并在 Gitea
-//   「设置 → 应用 → OAuth2 应用」创建应用，回调地址填 https://<站点域名>/admin/
-
-const SITE_URL = 'https://kenkai.me'
-const GITEA_URL = 'http://localhost:3200' // 仅隧道访问：桌面脚本把 3200 隧道到服务器的 Gitea
-const REPO = 'blogadmin/blog'
-
-// 分类在后台「分类」集合里新建和管理（src/content/categories/*.md），
-// 文章的分类字段用 relation 控件从中选择，保证分类名一致。
+// Decap CMS 配置：本地开发与线上生产均为「代理模式」——认证统一由 nginx Basic Auth
+// （账号密码）承担，CMS 本身不再走 OAuth。
+// - 本地开发：pnpm dev + `npx decap-server`（编辑本机文件）
+// - 线上生产：/admin/ 与 /cms-proxy/ 均有 nginx Basic Auth 保护，
+//   /cms-proxy/ 反代到服务器本机 decap-server(127.0.0.1:8081)，直接编辑 ~/blog/site
+// 改动由 auto-publish 服务自动提交并构建上线。
 
 export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> {
   return {
-    site_url: SITE_URL,
-    display_url: SITE_URL,
-    locale: 'zh_Hans',
-
-    ...(useLocalBackend ? { local_backend: true } : {}),
-    backend: {
-      name: 'gitea',
-      repo: REPO,
-      branch: 'main',
-      base_url: GITEA_URL,
-      // Gitea OAuth2 应用的 ClientID（PKCE 流程，无需 secret）
-      app_id: 'f385615e-7ea4-4e33-9b30-b5e09211c1fe',
-    },
-
+    // 本地开发注入 local_backend（decap-server 代理）；生产不注入
+    local_backend: useLocalBackend ? true : undefined,
+    backend: useLocalBackend
+      ? { name: 'gitea', repo: 'blogadmin/blog' } // 本地代理模式下 backend 不参与请求，占位即可
+      : { name: 'proxy', proxy_url: '/cms-proxy' },
     media_folder: 'public/images',
     public_folder: '/images',
-
+    locale: 'zh_Hans',
     collections: [
       {
         name: 'posts',
@@ -55,7 +39,6 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
             widget: 'list',
             field: { name: 'category', label: '分类名', widget: 'string' },
             required: false,
-            hint: '点「添加」输入分类名；新分类直接填写，保存后自动生效（建议复用已有分类名）',
           },
           { name: 'description', label: '摘要', widget: 'text', required: false },
           { name: 'draft', label: '草稿', widget: 'boolean', default: false, required: false },
