@@ -14,8 +14,14 @@ const props = Astro.props
 const configSEO = themeConfig.seo
 const configSite = themeConfig.site
 
-const title = props.title ?? configSite.title
-const desc = props.desc ?? configSite.description
+// astro-seo 对 <title> 等用 set:html 渲染、不转义（实测确认）。
+// 标题/描述来自文章 frontmatter（后台可填任意内容），必须在边界处转义，
+// 否则 </title> 等可逃逸出 head 标签形成存储型 XSS。
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string)
+
+const title = escapeHtml(props.title ?? configSite.title)
+const desc = escapeHtml(props.desc ?? configSite.description)
 const canonical = configSite.website
 const twitter = configSEO.twitter
 const rss = new URL('/atom.xml', Astro.site).toString()
