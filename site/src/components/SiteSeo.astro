@@ -1,6 +1,7 @@
 ---
-import { SEO, type SEOProps } from 'astro-seo'
-import { getImage } from 'astro:assets'
+// 极简 head（用户要求）：移除全部社交/SEO 标签（og/twitter/canonical/description/generator）。
+// 仅保留功能性标签：编码、视口、theme-color、标题、favicon/manifest、RSS 发现。
+// title 来自文章 frontmatter（后台可填任意内容），转义后 set:html 输出防 head 注入。
 import { themeConfig } from '~/.config'
 
 interface Props {
@@ -10,66 +11,18 @@ interface Props {
 }
 
 const props = Astro.props
-
-const configSEO = themeConfig.seo
 const configSite = themeConfig.site
 
-// astro-seo 对 <title> 等用 set:html 渲染、不转义（实测确认）。
-// 标题/描述来自文章 frontmatter（后台可填任意内容），必须在边界处转义，
-// 否则 </title> 等可逃逸出 head 标签形成存储型 XSS。
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string)
 
 const title = escapeHtml(props.title ?? configSite.title)
-const desc = escapeHtml(props.desc ?? configSite.description)
-const canonical = configSite.website
-const twitter = configSEO.twitter
 const rss = new URL('/atom.xml', Astro.site).toString()
-const optimizedImage = await getOptimizedImageURL()
-
-const seoLinks = [
-  { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
-  {
-    rel: 'alternate',
-    type: 'application/rss+xml',
-    title: themeConfig.site.title,
-    href: rss,
-  },
-  ...configSEO.link,
-]
-
-const seoMeta = [
-  { name: 'viewport', content: 'width=device-width' },
-  { name: 'generator', content: Astro.generator },
-  { name: 'twitter:image:src', content: optimizedImage },
-  { name: 'twitter:image:alt', content: desc },
-  { name: 'twitter:creator', content: twitter },
-  { name: 'twitter:site', content: twitter },
-  { name: 'twitter:card', content: 'summary_large_image' },
-  { name: 'twitter:title', content: title },
-  { name: 'twitter:description', content: desc },
-  ...configSEO.meta,
-]
-
-const openGraph: SEOProps['openGraph'] = {
-  basic: {
-    title: title,
-    type: 'article',
-    image: optimizedImage,
-    url: canonical,
-  },
-}
-
-async function getOptimizedImageURL() {
-  const image = props.banner && (await getImage({ src: props.banner, format: 'jpeg' }))
-  return new URL(image?.src ?? '/placeholder.png', Astro.url).toString()
-}
 ---
-
-<SEO
-  charset="utf-8"
-  title={title}
-  description={desc}
-  extend={{ link: seoLinks, meta: seoMeta }}
-  openGraph={openGraph}
-/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+{themeConfig.seo.meta.filter((m) => m.name === 'theme-color').map((m) => <meta name={m.name} content={m.content} />)}
+<title set:html={title} />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="alternate" type="application/rss+xml" title={escapeHtml(configSite.title)} href={rss} />
+{themeConfig.seo.link.map((l) => <link rel={l.rel} href={l.href} type={l.type} sizes={l.sizes} />)}
