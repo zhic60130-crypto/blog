@@ -1,13 +1,15 @@
 ---
-// 背景装饰 v3（按用户时间轴规格）：
+// 背景装饰 v4（纯淡入，按用户要求替换 v3 的线稿描画动画）：
 //  0.0s 方格纸立即出现（global.css，无动画）
-//  0.1s 线稿开始：耳发 → 0.35s 脸 → 0.6s 身体手臂 → 1.0s 纸飞机 → 1.5s 细节+星芒轨迹
-//  2.0s 线稿基本完成 → 2.1s 彩色 PNG 淡入 0→.14（线稿同时沉到 .12）→ 2.8s 结束静止
-//  播放策略：仅首页首访（sessionStorage）；其余直接最终态；reduced-motion 直接最终态
+//  整页加载后，彩色人物与装饰层在 2s 内一起慢慢淡入至最终浓度，之后静止
+//  播放策略：任何路由的整页加载（首进/刷新）都播一次；
+//  swup 跳转不重载本脚本（背景在 main 外持久存在）故不会每次跳转重播
+//  prefers-reduced-motion 环境同样播放淡入：纯 opacity 过渡（无位移/缩放），
+//  属低刺激动效，全端行为一致（此前 reduce 分支直接跳到终态，导致桌面看不到入场）
 ---
 
 <div id="charStage" class="bg-stage" aria-hidden="true">
-  <!-- 装饰层：轨迹 / 小纸飞机 / 星芒 / 手写短句（1.5s 随细节一起出现） -->
+  <!-- 装饰层：轨迹 / 小纸飞机 / 星芒 / 手写短句 -->
   <svg class="bg-decor" viewBox="0 0 1440 900" preserveAspectRatio="xMaxYMax slice">
     <g fill="none" stroke="currentColor" stroke-width="2">
       <path d="M1235 425 C 1285 405, 1310 362, 1348 318" stroke-dasharray="6 8" />
@@ -33,65 +35,17 @@
     </g>
   </svg>
 
-  <!-- 角色层：彩色位图 + 真线稿（同 viewBox 0 0 1456 1080，像素对齐） -->
+  <!-- 角色层：彩色位图（线稿 SVG 已随描画动画一并移除） -->
   <div class="char-wrap">
     <picture>
       <source srcset="/bg-character.webp" type="image/webp" />
       <img class="char-color" src="/bg-character.png" alt="" width="1456" height="1080" />
     </picture>
-    <svg class="char-line" viewBox="0 0 1456 1080">
-      <g id="ears-hair">
-        <path class="line" pathLength="1" d="M578 266 C553 239 548 195 557 154 C563 124 575 103 588 106 C621 115 655 143 687 164" />
-        <path class="line" pathLength="1" d="M585 238 C572 215 573 182 580 166 C588 148 601 153 616 173 C626 186 628 203 620 216" />
-        <path class="line" pathLength="1" d="M800 158 C813 112 823 73 844 57 C865 45 892 72 911 111 C919 129 925 148 925 172" />
-        <path class="line" pathLength="1" d="M846 143 C846 116 853 93 866 84 C883 94 896 112 899 137" />
-        <path class="line" pathLength="1" d="M653 174 C714 144 782 138 835 150 C878 155 923 170 958 203 C984 229 997 263 994 300" />
-        <path class="line" pathLength="1" d="M716 238 C750 218 793 210 835 216 C865 220 890 232 913 252 C897 249 879 251 861 260 C874 274 879 288 879 307 M879 307 C854 286 828 278 810 286 C799 313 783 338 758 354 C739 338 726 316 717 291 C701 304 692 320 687 342" />
-        <path class="line" pathLength="1" d="M641 213 C598 185 552 168 508 170 C459 173 431 210 433 258 C403 244 367 252 339 277 C309 304 305 345 325 373 C292 381 270 408 273 438 C276 473 306 497 348 495 C369 526 410 535 445 516 C468 542 511 547 545 527" />
-        <path class="line" pathLength="1" d="M506 333 C459 353 427 389 423 431 C419 467 433 501 460 523 C429 535 411 561 417 590 C424 621 459 635 493 622 C503 660 542 684 578 674 C601 669 621 653 632 630" />
-        <path class="line" pathLength="1" d="M950 207 C1008 180 1060 184 1092 216 C1119 243 1116 284 1094 310 C1122 322 1142 348 1144 379 C1146 408 1129 436 1101 450" />
-      </g>
-      <g id="face">
-        <path class="line" pathLength="1" d="M675 303 C661 351 668 398 696 431 C724 462 763 477 802 475 C846 474 884 451 902 414 C916 383 919 347 908 318" />
-        <path class="line" pathLength="1" d="M710 348 C724 326 747 320 765 333 C784 347 786 384 770 408 C756 430 730 428 715 406 C701 385 700 364 710 348" />
-        <path class="line" pathLength="1" d="M817 342 C832 323 854 321 869 334 C886 350 887 382 873 405 C859 427 836 426 821 408 C806 389 805 360 817 342" />
-        <path class="line" pathLength="1" d="M789 437 C799 425 816 426 825 438 C823 453 808 460 796 452 C790 449 787 444 789 437" />
-        <path class="line" pathLength="1" d="M839 431 L841 431" />
-      </g>
-      <g id="body">
-        <path class="line" pathLength="1" d="M661 455 C624 462 591 482 571 509 C553 532 552 558 568 575 C582 590 605 589 623 580" />
-        <path class="line" pathLength="1" d="M624 475 C617 507 619 541 636 564 C649 582 665 592 681 596" />
-        <path class="line" pathLength="1" d="M906 463 C933 475 949 494 947 517 C945 539 932 553 915 563 C931 578 934 600 925 616 C915 634 896 637 878 627" />
-        <path class="line" pathLength="1" d="M682 465 C702 480 726 490 757 494 C787 499 819 492 844 475 C864 493 879 519 883 548 C887 578 876 607 854 626 C831 645 799 650 767 643 C733 636 705 617 689 592 C675 569 671 536 682 465" />
-        <path class="line" pathLength="1" d="M727 484 L758 524 L789 486 M758 524 L787 548 L817 507" />
-        <path class="line" pathLength="1" d="M750 506 L786 539 M789 507 L758 540" />
-        <path class="line" pathLength="1" d="M667 585 C691 587 717 596 735 610 C746 619 746 635 735 646 C721 660 694 656 676 645" />
-        <path class="line" pathLength="1" d="M865 570 C900 559 928 570 938 592 C947 612 937 632 916 641 C896 649 872 644 852 630" />
-        <path class="line" pathLength="1" d="M882 469 C910 444 929 412 938 375 C945 347 958 321 976 304 C998 283 1030 285 1051 306 C1074 327 1070 361 1052 383 C1036 404 1010 417 984 419 C965 448 944 478 917 501" />
-        <path class="line" pathLength="1" d="M954 375 C973 389 995 394 1018 387" />
-        <path class="line" pathLength="1" d="M704 618 C686 652 690 691 719 715 C740 734 769 739 796 727 C821 744 856 739 876 717 C895 696 897 667 884 643" />
-      </g>
-      <g id="plane">
-        <path class="line" pathLength="1" d="M34 489 L226 715 L394 614 L631 662 L1422 1024 L946 615 L1025 548 L1275 705 L1422 1024 L449 869 L63 804 Z" />
-        <path class="line" pathLength="1" d="M63 804 L946 615 L1422 1024" />
-        <path class="line" pathLength="1" d="M449 869 L449 966 L826 928 L866 1002 L1422 1024" />
-        <path class="line" pathLength="1" d="M32 489 L91 596 L134 610 L91 646 L150 710" />
-      </g>
-      <g id="details">
-        <path class="line" pathLength="1" d="M715 207 C759 191 811 190 859 201 L899 230 C843 219 781 220 729 230 Z" />
-        <path class="line" pathLength="1" d="M766 208 L789 220 L772 231 M798 205 L824 218 L805 232 M832 205 L857 218 L838 231" />
-        <path class="line" pathLength="1" d="M517 267 L552 234 L606 282 L568 328 Z" />
-        <path class="line" pathLength="1" d="M544 251 L582 288 M560 239 L598 274" />
-        <path class="line" pathLength="1" d="M974 298 C985 282 1004 274 1021 280 C1037 286 1042 302 1035 315 C1059 308 1083 319 1091 338 C1099 359 1089 381 1070 390" />
-        <path class="line" pathLength="1" d="M686 564 C728 587 782 598 832 585 C851 580 866 571 881 559" />
-        <path class="line" pathLength="1" d="M706 620 L724 655 M728 615 L746 652 M856 599 L841 633 M875 600 L858 638" />
-      </g>
-    </svg>
   </div>
 </div>
 
 <script>
-  // 播放策略：任何路由的整页加载（首进/刷新）都播一次；
+  // 播放策略：任何路由的整页加载（首进/刷新）都淡入一次；
   // swup 跳转不重载本脚本（背景在 main 外持久存在）故不会每次跳转重播
   const stage = document.getElementById('charStage')
   if (stage) {
@@ -141,8 +95,7 @@
     aspect-ratio: 1456 / 1080;
   }
   .char-wrap picture,
-  .char-wrap img,
-  .char-wrap svg {
+  .char-wrap img {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -154,69 +107,26 @@
     opacity: var(--char-op);
   }
 
-  /* 线稿：静止态完全淡出，只留干净彩图（避免与原图重叠） */
-  .char-line {
-    opacity: 0;
+  /* ===== 播放态：整体纯淡入（2s，人物与装饰同步） ===== */
+  #charStage.play .char-wrap {
+    animation: char-fade-in 2s ease both;
   }
-  .char-line .line {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-  }
-
-  /* ===== 播放态时间轴 ===== */
   #charStage.play .bg-decor {
-    opacity: 0;
-    animation: decor-in 0.6s ease 1.5s forwards;
-  }
-  #charStage.play .char-line {
-    opacity: 0.7;
-    /* 上色淡入后线稿完全淡出 */
-    animation: char-settle 0.6s ease 2.2s forwards;
-  }
-  #charStage.play .char-line .line {
-    stroke-dashoffset: 1;
-  }
-  #charStage.play #ears-hair .line {
-    animation: char-draw 0.8s ease-out 0.1s forwards;
-  }
-  #charStage.play #face .line {
-    animation: char-draw 0.8s ease-out 0.35s forwards;
-  }
-  #charStage.play #body .line {
-    animation: char-draw 0.8s ease-out 0.6s forwards;
-  }
-  #charStage.play #plane .line {
-    animation: char-draw 0.8s ease-out 1s forwards;
-  }
-  #charStage.play #details .line {
-    animation: char-draw 0.8s ease-out 1.5s forwards;
-  }
-  #charStage.play .char-color {
-    opacity: 0;
-    animation: char-fade 0.7s ease 2.1s forwards;
+    animation: decor-in 2s ease both;
   }
 
-  @keyframes char-draw {
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-  @keyframes char-fade {
-    to {
-      opacity: var(--char-op);
-    }
-  }
-  @keyframes char-settle {
-    to {
+  @keyframes char-fade-in {
+    from {
       opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
   @keyframes decor-in {
+    from {
+      opacity: 0;
+    }
     to {
       opacity: 0.18;
     }
@@ -229,27 +139,6 @@
       width: 70vw;
       left: -18%;
       top: -3%;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    #charStage.play .char-line .line {
-      animation: none;
-      stroke-dashoffset: 0;
-    }
-    #charStage.play .char-line,
-    #charStage.play .char-color,
-    #charStage.play .bg-decor {
-      animation: none;
-    }
-    #charStage.play .char-line {
-      opacity: 0;
-    }
-    #charStage.play .char-color {
-      opacity: var(--char-op);
-    }
-    #charStage.play .bg-decor {
-      opacity: 0.18;
     }
   }
 </style>
