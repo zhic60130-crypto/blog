@@ -5,8 +5,8 @@
 // - 生产：Gitea 后端。部署前填好下面三个 TODO，并在 Gitea
 //   「设置 → 应用 → OAuth2 应用」创建应用，回调地址填 https://<站点域名>/admin/
 
-const SITE_URL = 'http://42.194.232.215' // TODO: 域名就绪后改成 https://你的域名
-const GITEA_URL = 'http://42.194.232.215:3100' // TODO: 域名就绪后改成 https://git.你的域名
+const SITE_URL = 'https://kenkai.me'
+const GITEA_URL = 'http://42.194.232.215:3100' // TODO: git.kenkai.me 的 DNS + 证书就绪后改成 https://git.kenkai.me
 const REPO = 'blogadmin/blog'
 
 // 分类在后台「分类」集合里新建和管理（src/content/categories/*.md），
@@ -25,7 +25,7 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
       branch: 'main',
       base_url: GITEA_URL,
       // Gitea OAuth2 应用的 ClientID（PKCE 流程，无需 secret）
-      app_id: 'fb660c78-7793-438e-bd6b-1e111ee54488',
+      app_id: '8be88d66-21f5-4151-8de2-2245b9bf7935',
     },
 
     media_folder: 'public/images',
