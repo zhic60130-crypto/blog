@@ -10,7 +10,7 @@ const GITEA_URL = 'https://git.example.com' // TODO: 你的 Gitea 地址
 const REPO = 'your-gitea-name/your-blog-repo' // TODO: 你的仓库（用户名/仓库名）
 
 // 分类预设：后台下拉多选，避免分类名漂移；新增分类时往这里加
-const CATEGORY_OPTIONS = ['随便写点', '技术文档', '读书摘录']
+const CATEGORY_OPTIONS = ['随便写点', '技术文档', '读书摘录', '测试分类']
 
 export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> {
   return {

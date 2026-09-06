@@ -8,7 +8,8 @@ const posts = defineCollection({
       title: z.string(),
       pubDate: z.coerce.date(),
       modDate: z.coerce.date().optional(),
-      categories: z.array(z.string()),
+      // 后台清空分类会存出 null，这里归一化成空数组，避免整站校验报错
+      categories: z.preprocess((v) => (v == null ? [] : v), z.array(z.string())),
       draft: z.boolean().default(false).optional(),
       description: z.string().optional(),
       customData: z.string().optional(),
