@@ -6,7 +6,7 @@
 //   「设置 → 应用 → OAuth2 应用」创建应用，回调地址填 https://<站点域名>/admin/
 
 const SITE_URL = 'https://kenkai.me'
-const GITEA_URL = 'https://kenkai.me:3100' // nginx TLS 反代 → 本机 3200 的 Gitea
+const GITEA_URL = 'http://localhost:3200' // 仅隧道访问：桌面脚本把 3200 隧道到服务器的 Gitea
 const REPO = 'blogadmin/blog'
 
 // 分类在后台「分类」集合里新建和管理（src/content/categories/*.md），
