@@ -70,7 +70,7 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
             display_fields: ['title'],
             multiple: true,
             required: false,
-            hint: '新分类请先在左侧「分类」里新建，再回到这里选择',
+            hint: '新分类请先在左侧「分类」里新建，刷新页面后回到这里即可选择',
           },
           { name: 'description', label: '摘要', widget: 'text', required: false },
           { name: 'draft', label: '草稿', widget: 'boolean', default: false, required: false },
