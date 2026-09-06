@@ -12,9 +12,11 @@
     window.__themeControlInit = true
 
     var KEY = 'theme'
+    var root = document.documentElement
+    var changing = false
 
     function apply(mode) {
-      document.documentElement.classList.toggle('dark', mode === 'dark')
+      root.classList.toggle('dark', mode === 'dark')
     }
 
     function systemMode() {
@@ -36,15 +38,73 @@
       if (!savedMode()) apply(e.matches ? 'dark' : 'light')
     })
 
-    // 委托监听：按钮被 swup 换页重渲染后依然有效
+    // 委托监听：按钮被 swup 换页重渲染后依然有效。
     document.addEventListener('click', function (e) {
       var btn = e.target && e.target.closest ? e.target.closest('[data-theme-toggle]') : null
-      if (!btn) return
-      var next = document.documentElement.classList.contains('dark') ? 'light' : 'dark'
+      if (!btn || changing) return
+      var origin = btn
+      var icons = btn.querySelectorAll('.icon')
+      for (var i = 0; i < icons.length; i++) {
+        if (icons[i].getClientRects().length) {
+          origin = icons[i]
+          break
+        }
+      }
+      var rect = origin.getBoundingClientRect()
+      var point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+      var next = root.classList.contains('dark') ? 'light' : 'dark'
       try {
         localStorage.setItem(KEY, next)
       } catch (err) {}
-      apply(next)
+
+      if (!document.startViewTransition) {
+        apply(next)
+        return
+      }
+
+      // 到最远角落的距离；使用视口坐标，页面滚动后仍然正确。
+      var radius = Math.hypot(
+        Math.max(point.x, window.innerWidth - point.x),
+        Math.max(point.y, window.innerHeight - point.y)
+      )
+      root.style.setProperty('--theme-reveal-x', point.x + 'px')
+      root.style.setProperty('--theme-reveal-y', point.y + 'px')
+      changing = true
+      root.classList.add('theme-transitioning')
+      function cleanup() {
+        root.classList.remove('theme-transitioning')
+        root.style.removeProperty('--theme-reveal-x')
+        root.style.removeProperty('--theme-reveal-y')
+        changing = false
+      }
+
+      var transition
+      try {
+        // 浏览器保留旧页面快照，并渲染真实的新主题页面供圆形裁剪。
+        transition = document.startViewTransition(function () { apply(next) })
+      } catch (err) {
+        apply(next)
+        cleanup()
+        return
+      }
+
+      transition.ready.then(function () {
+        root.animate({
+          clipPath: [
+            'circle(0px at ' + point.x + 'px ' + point.y + 'px)',
+            'circle(' + radius + 'px at ' + point.x + 'px ' + point.y + 'px)'
+          ]
+        }, {
+          duration: 2000,
+          easing: 'linear',
+          fill: 'forwards',
+          pseudoElement: '::view-transition-new(root)'
+        })
+      }).catch(function () {
+        // 页面隐藏等情况可能跳过动画，主题切换仍由更新回调完成。
+        transition.skipTransition()
+      })
+      transition.finished.then(cleanup, cleanup)
     })
 
     // 多标签页同步

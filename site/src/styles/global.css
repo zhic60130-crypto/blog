@@ -46,3 +46,41 @@ html {
 .prose {
   font-size: 1.075rem;
 }
+
+/* 两套完整主题画面叠放，只裁剪新画面，不进行整屏透明度混合。 */
+html.theme-transitioning::view-transition-group(root) {
+  animation: none;
+}
+
+html.theme-transitioning::view-transition-image-pair(root) {
+  isolation: auto;
+}
+
+html.theme-transitioning::view-transition-old(root),
+html.theme-transitioning::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+html.theme-transitioning::view-transition-old(root) {
+  z-index: 1;
+}
+
+html.theme-transitioning::view-transition-new(root) {
+  z-index: 2;
+  clip-path: circle(0 at var(--theme-reveal-x) var(--theme-reveal-y));
+  will-change: clip-path;
+}
+
+html.theme-transitioning::view-transition {
+  pointer-events: none;
+}
+
+/* 拍摄主题画面时让按钮/链接直接呈现最终颜色，避免圆内再次渐变。 */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
+}

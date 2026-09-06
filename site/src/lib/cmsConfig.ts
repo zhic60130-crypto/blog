@@ -25,7 +25,7 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
       branch: 'main',
       base_url: GITEA_URL,
       // Gitea OAuth2 应用的 ClientID（PKCE 流程，无需 secret）
-      app_id: '8be88d66-21f5-4151-8de2-2245b9bf7935',
+      app_id: 'f385615e-7ea4-4e33-9b30-b5e09211c1fe',
     },
 
     media_folder: 'public/images',
