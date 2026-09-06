@@ -9,8 +9,8 @@ const SITE_URL = 'https://blog.example.com' // TODO: 部署时改成你的域名
 const GITEA_URL = 'https://git.example.com' // TODO: 你的 Gitea 地址
 const REPO = 'your-gitea-name/your-blog-repo' // TODO: 你的仓库（用户名/仓库名）
 
-// 分类预设：后台下拉多选，避免分类名漂移；新增分类时往这里加
-const CATEGORY_OPTIONS = ['随便写点', '技术文档', '读书摘录', '测试分类']
+// 分类在后台「分类」集合里新建和管理（src/content/categories/*.md），
+// 文章的分类字段用 relation 控件从中选择，保证分类名一致。
 
 export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> {
   return {
@@ -33,6 +33,17 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
 
     collections: [
       {
+        // 分类登记处：在后台这里「新建分类」，文章编辑页即可选择
+        name: 'category',
+        label: '分类',
+        label_singular: '分类',
+        folder: 'src/content/categories',
+        create: true,
+        slug: '{{slug}}',
+        identifier_field: 'title',
+        fields: [{ name: 'title', label: '分类名', widget: 'string' }],
+      },
+      {
         name: 'posts',
         label: '文章',
         label_singular: '文章',
@@ -52,11 +63,14 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
           {
             name: 'categories',
             label: '分类',
-            widget: 'select',
+            widget: 'relation',
+            collection: 'category',
+            search_fields: ['title'],
+            value_field: 'title',
+            display_fields: ['title'],
             multiple: true,
             required: false,
-            options: CATEGORY_OPTIONS,
-            hint: `预设：${CATEGORY_OPTIONS.join(' / ')}；需要新分类时在 src/lib/cmsConfig.ts 的 CATEGORY_OPTIONS 里加`,
+            hint: '新分类请先在左侧「分类」里新建，再回到这里选择',
           },
           { name: 'description', label: '摘要', widget: 'text', required: false },
           { name: 'draft', label: '草稿', widget: 'boolean', default: false, required: false },
