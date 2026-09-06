@@ -1,14 +1,10 @@
 ---
-// 背景装饰 v4（纯淡入，按用户要求替换 v3 的线稿描画动画）：
-//  0.0s 方格纸立即出现（global.css，无动画）
-//  整页加载后，彩色人物与装饰层在 2s 内一起慢慢淡入至最终浓度，之后静止
-//  播放策略：任何路由的整页加载（首进/刷新）都播一次；
-//  swup 跳转不重载本脚本（背景在 main 外持久存在）故不会每次跳转重播
-//  prefers-reduced-motion 环境同样播放淡入：纯 opacity 过渡（无位移/缩放），
-//  属低刺激动效，全端行为一致（此前 reduce 分支直接跳到终态，导致桌面看不到入场）
+// 背景装饰 v5（纯静态，按用户要求移除全部入场动画）：
+//  方格纸（global.css）、人物彩图、装饰层均随页面加载立即显示，无任何动画
+//  演变记录：v3 线稿描画 → v4 纯淡入 → v5 静态；.play 播放脚本已一并移除
 ---
 
-<div id="charStage" class="bg-stage" aria-hidden="true">
+<div class="bg-stage" aria-hidden="true">
   <!-- 装饰层：轨迹 / 小纸飞机 / 星芒 / 手写短句 -->
   <svg class="bg-decor" viewBox="0 0 1440 900" preserveAspectRatio="xMaxYMax slice">
     <g fill="none" stroke="currentColor" stroke-width="2">
@@ -35,7 +31,7 @@
     </g>
   </svg>
 
-  <!-- 角色层：彩色位图（线稿 SVG 已随描画动画一并移除） -->
+  <!-- 角色层：彩色位图 -->
   <div class="char-wrap">
     <picture>
       <source srcset="/bg-character.webp" type="image/webp" />
@@ -43,15 +39,6 @@
     </picture>
   </div>
 </div>
-
-<script>
-  // 播放策略：任何路由的整页加载（首进/刷新）都淡入一次；
-  // swup 跳转不重载本脚本（背景在 main 外持久存在）故不会每次跳转重播
-  const stage = document.getElementById('charStage')
-  if (stage) {
-    stage.classList.add('play')
-  }
-</script>
 
 <style>
   .bg-stage {
@@ -105,31 +92,6 @@
   /* 彩色位图：浓度由 --char-op 控制（multiply 在 .bg-stage 层生效） */
   .char-color {
     opacity: var(--char-op);
-  }
-
-  /* ===== 播放态：整体纯淡入（2s，人物与装饰同步） ===== */
-  #charStage.play .char-wrap {
-    animation: char-fade-in 2s ease both;
-  }
-  #charStage.play .bg-decor {
-    animation: decor-in 2s ease both;
-  }
-
-  @keyframes char-fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes decor-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 0.18;
-    }
   }
 
   /* 移动端：更小 + 左上角露一点 + 更淡 */
