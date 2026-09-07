@@ -11,7 +11,7 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
     local_backend: useLocalBackend ? true : undefined,
     backend: useLocalBackend
       ? { name: 'gitea', repo: 'blogadmin/blog' } // 本地代理模式下 backend 不参与请求，占位即可
-      : { name: 'proxy', proxy_url: '/cms-proxy' },
+      : { name: 'proxy', proxy_url: '/cms-proxy/' },
     media_folder: 'public/images',
     public_folder: '/images',
     locale: 'zh_Hans',
