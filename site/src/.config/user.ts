@@ -4,7 +4,7 @@ import type { UserConfig } from '~/types'
 // derived from the site's rendered HTML (2026-09 crawl).
 export const userConfig: Partial<UserConfig> = {
   site: {
-    title: '講評世界',
+    title: '摸鱼基地',
     subtitle: 'Moeyua',
     author: 'Moeyua',
     description: 'そして、次の曲が始まるのです',
