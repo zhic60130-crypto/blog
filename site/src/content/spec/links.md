@@ -6,4 +6,4 @@ title: 友链
 
 ## 朋友们
 
-（虚位以待——在后台「单页 → 友链页」编辑本段即可添加，建议格式：`[名字](链接) —— 一句话介绍`）
+- <a href="https://www.yysuni.com/bloggers" target="_blank" rel="noopener">YYsuni · 博主目录</a> —— GitHub 全存储的纯静态博客，无后端、内容直接提交进仓库；宝藏是他的博主目录：收录 20+ 个优质博客，每个都配一句毒舌又真诚的点评。
