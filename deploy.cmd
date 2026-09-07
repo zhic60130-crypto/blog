@@ -1,10 +1,16 @@
 @echo off
-REM 一键部署：本地提交 → 推送 Gitea → 服务器拉取构建上线
+chcp 65001 >nul
 cd /d "%~dp0"
+REM 一键发布：拉取线上后台的改动 -> 本地提交 -> 推送 GitHub -> 自动构建上线
+echo 拉取线上后台的改动...
+git pull gitea master --rebase
 git add -A site
 set /p MSG=提交说明（回车默认“文章更新”）:
 if "%MSG%"=="" set MSG=文章更新
 git commit -m "%MSG%"
+git push github master:main
 git push gitea master
-ssh -o BatchMode=yes ubuntu@42.194.232.215 "cd ~/blog && git pull && cd site && pnpm build 2>&1 | tail -1 && sudo rsync -a --delete dist/ /var/www/blog/ && echo 部署完成"
+echo.
+echo  已推送，GitHub Actions 正在自动构建（1-2 分钟后 https://kenkai.me 生效）
+echo  构建进度可在 GitHub 仓库的 Actions 页查看。
 pause
