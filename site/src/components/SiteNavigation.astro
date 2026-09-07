@@ -5,7 +5,8 @@ const { navLinks, socialLinks } = themeConfig.site
 const { translate: t } = Astro.locals
 ---
 
-<nav class="text-center font-bold" flex="~ col gap-4" lg="mt-16">
+<!-- 导航上移（用户要求）：去掉原 lg:mt-16（4rem 顶边距），与简介卡的间距只留 header 的 gap-6 -->
+<nav class="text-center font-bold" flex="~ col gap-4">
   <ul lg="flex-col items-start text-4.5 gap-5" class="text-4" flex="~ row gap-3 justify-center">
     {
       navLinks.map((nav) => (

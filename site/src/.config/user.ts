@@ -30,6 +30,11 @@ export const userConfig: Partial<UserConfig> = {
         name: 'Categories',
         href: '/categories',
       },
+      {
+        // 友链页（用户要求新增）：/links，内容在 src/content/spec/links.md
+        name: '友链',
+        href: '/links',
+      },
     ],
     categoryMap: [],
     // 页脚三行按用户要求移除（MIT 主题署名建议保留在仓库 LICENSE/README 中）

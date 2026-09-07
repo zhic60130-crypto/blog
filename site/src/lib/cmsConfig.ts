@@ -78,6 +78,15 @@ export function getCmsConfig(useLocalBackend: boolean): Record<string, unknown> 
               { name: 'body', label: '简介列表/正文', widget: 'markdown' },
             ],
           },
+          {
+            name: 'links',
+            label: '友链页',
+            file: 'src/content/spec/links.md',
+            fields: [
+              { name: 'title', label: '标题', widget: 'string', required: false },
+              { name: 'body', label: '正文', widget: 'markdown' },
+            ],
+          },
         ],
       },
     ],

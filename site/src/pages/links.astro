@@ -1,0 +1,24 @@
+---
+// 友链页：与 about.astro 同款结构，内容来自 src/content/spec/links.md（后台可编辑）。
+// 与文章不同，友链页不显示发布日期。
+import { getEntry, render } from 'astro:content'
+import LayoutDefault from '~/layouts/LayoutDefault.astro'
+
+const linksPost = await getEntry('spec', 'links')
+if (!linksPost) {
+  throw new Error('No links post found')
+}
+const title = ((linksPost.data as Record<string, any>).title as string) || '友链'
+const { Content } = await render(linksPost)
+---
+
+<LayoutDefault>
+  <header flex="~ col gap-2">
+    <h1 class="post-title">
+      <a class="not-prose">{title}</a>
+    </h1>
+  </header>
+  <article class="prose">
+    <Content />
+  </article>
+</LayoutDefault>
